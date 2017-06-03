@@ -13,6 +13,7 @@ var MAX_ACORNS = 15;
 var MAX_SPANNERS = 5;
 var MARGIN = 40;
 var START_OFFSET = 750;
+var HEALTH_LOSS = 1;
 
 function preload(){
   //preload animations
@@ -39,10 +40,12 @@ function setup(){
     createSpanner(3, px, py);
   }
 
-  player = createSprite(random(0,width), random(0,height));
+  player = createSprite(width/2, height/2);
   var img  = loadImage("assets/squizza_sprite.png");
   player.addImage(img);
   player.scale = .6;
+  player.position.x = width/2;
+  player.position.y = height/2;
   //player.addAnimation("normal", "assets/squizza_sprite.png", "assets/squizza_sprite.png");
   //player.addAnimation("hurting", "assets/squizza_hurting0001.png", "assets/squizza_hurting0002.png", "assets/squizza_hurting0003.png");
 
@@ -95,7 +98,7 @@ function draw(){
     if(player.overlap(spanners)){
       //hurty.play();
         if (health > 0) {
-          health -= 2;
+          health -= HEALTH_LOSS;
         }
     }
     else {
