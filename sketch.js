@@ -1,16 +1,24 @@
 var player;
 var acorns;
 var spanners;
+var hurty;
 var timer = 0;
 var theTimer;
 var health = 100;
 var dead = false;
+var won = false;
 
 //Global variables
 var MAX_ACORNS = 15;
 var MAX_SPANNERS = 5;
 var MARGIN = 40;
 var START_OFFSET = 750;
+
+function preload(){
+  //preload animations
+  //hurty = loadAnimation("assets/squizza_hurting0003.png");
+
+}
 
 function setup(){
   createCanvas(800,600);
@@ -35,6 +43,9 @@ function setup(){
   var img  = loadImage("assets/squizza_sprite.png");
   player.addImage(img);
   player.scale = .6;
+  //player.addAnimation("normal", "assets/squizza_sprite.png", "assets/squizza_sprite.png");
+  //player.addAnimation("hurting", "assets/squizza_hurting0001.png", "assets/squizza_hurting0002.png", "assets/squizza_hurting0003.png");
+
   theTimer = setInterval(updateTimer, 500);
 }
 
@@ -80,13 +91,26 @@ function draw(){
       acorns[i].remove();
   }
 
-  for (var i = 0; i < spanners.length; i++){
-    if(player.overlap(spanners[i]))
-      if (health > 0) health -= 1;
-  }
+  //for (var i = 0; i < spanners.length; i++){
+    if(player.overlap(spanners)){
+      //hurty.play();
+        if (health > 0) {
+          health -= 2;
+        }
+    }
+    else {
+      //hurty.stop();
+      //TODO add better animation stuff
+    }
+  //}
 
-  player.attractionPoint(.2, mouseX, mouseY);
-  player.maxSpeed = 4;
+  //Old movement
+  //player.attractionPoint(.2, mouseX, mouseY);
+  //player.maxSpeed = 4;
+
+  //new movementment
+  player.velocity.x = (mouseX-player.position.x)/10;
+  player.velocity.y = (mouseY-player.position.y)/10;
 
   //draw all sprites
   drawSprites();
@@ -147,6 +171,7 @@ function gameOverMessage(){
     textAlign(CENTER);
     textSize(45);
     text("You did good! #WIN", width/2, height/2);
+    clearSprites();
   } else {
     clearInterval(theTimer);
     fill(255, 10, 0);
@@ -158,4 +183,11 @@ function gameOverMessage(){
 
 function updateTimer(){
   timer += 1;
+}
+
+function clearSprites(){
+  for(var i=0; i<allSprites.length; i++) {
+    var s = allSprites[i];
+    s.remove();
+  }
 }
