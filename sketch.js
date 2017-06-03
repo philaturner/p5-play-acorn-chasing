@@ -1,6 +1,6 @@
 var player;
 var acorns;
-var trees;
+var spanners;
 var timer = 0;
 var theTimer;
 var MAX_ACORNS = 15;
@@ -10,7 +10,7 @@ var START_OFFSET = 750;
 function setup(){
   createCanvas(800,600);
   acorns = new Group();
-  trees= new Group(); //TODO Build into obsticles with trees, add health and death
+  spanners = new Group(); //TODO Build into obsticles with trees, add player health and death
 
   for (var i = 0; i < MAX_ACORNS; i++){
     var ang = random(360);
@@ -33,7 +33,8 @@ function draw(){
   textAlign(CENTER);
   text("Move your mouse to move Squizza", width/2, 20);
   text(timer + ' seconds', width/2, height-20);
-  //check to see if game overlap
+
+  //check to see if gameover
   if (acorns.length == 0) gameOverMessage();
 
   //check for sprites moving off screen and reposition
@@ -67,15 +68,17 @@ function createAcorn(type, x, y){
   //a.debug = true;
   a.type = type;
 
+  //TODO Build other acorn sprite types small or different??
   if(type == 3)
-    a.scale = .04;
+    a.scale = .4;
   if(type == 2)
     a.scale = .6;
   if(type == 1)
     a.scale = .3;
 
   a.mass =  2 + a.scale;
-  //a.setCollider("circle", 0, 0, 50);
+
+  //a.setCollider("circle", 0, 0, 50); //TODO Add chance not to consume but to collide and push away acorn
   acorns.add(a);
   return a;
 }
