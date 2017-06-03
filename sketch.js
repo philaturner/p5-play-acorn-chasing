@@ -1,6 +1,7 @@
 //var direction = 90; //circle initial direction moving down
 var player;
 var acorns;
+var trees;
 var timer = 0;
 var theTimer;
 var MAX_ACORNS = 15;
@@ -10,6 +11,7 @@ var START_OFFSET = 750;
 function setup(){
   createCanvas(800,600);
   acorns = new Group();
+  trees= new Group();
 
   for (var i = 0; i < MAX_ACORNS; i++){
     var ang = random(360);
