@@ -1,4 +1,3 @@
-//var direction = 90; //circle initial direction moving down
 var player;
 var acorns;
 var trees;
@@ -11,7 +10,7 @@ var START_OFFSET = 750;
 function setup(){
   createCanvas(800,600);
   acorns = new Group();
-  trees= new Group();
+  trees= new Group(); //TODO Build into obsticles with trees, add health and death
 
   for (var i = 0; i < MAX_ACORNS; i++){
     var ang = random(360);
