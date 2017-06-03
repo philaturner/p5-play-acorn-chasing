@@ -1,7 +1,8 @@
 //var direction = 90; //circle initial direction moving down
 var player;
 var particles;
-var timer;
+var timer = 0;
+var theTimer;
 var MAX_PARTICLES = 10;
 var PART_SIZE = 50;
 var MARGIN = 40;
@@ -17,16 +18,21 @@ function setup(){
     var py = height/2+ START_OFFSET * sin(radians(ang));
     createParticle(3, px, py);
   }
-  player = createSprite(random(0,width), random(0,height), 30, 100);
+  player = createSprite(random(0,width), random(0,height));
+  var img  = loadImage("assets/squizza_sprite.png");
+  player.addImage(img);
+  player.scale = .6;
+  theTimer = setInterval(updateTimer, 500);
 }
 
 function draw(){
   background(61);
+
   //text at top of screen
   fill(255);
   textAlign(CENTER);
-  text("Use your mouse to destroy the blocks", width/2, 20);
-
+  text("Use your mouse to move Squizza", width/2, 20);
+  text(timer + ' seconds', width/2, height-20);
   //check to see if game overlap
   if (particles.length == 0) gameOverMessage();
 
@@ -54,13 +60,15 @@ function draw(){
 
 function createParticle(type, x, y){
   var p = createSprite(x, y, PART_SIZE, PART_SIZE);
-  //var img  = loadImage("assets/particle"+floor(random(0,3))+".png");
-  //a.addImage(img);
+  var img  = loadImage("assets/acorn.png");
+  p.addImage(img);
   p.setSpeed(4.5-(type/2), random(360));
-  //a.rotationSpeed = .5;
+  p.rotationSpeed = .5;
   //a.debug = true;
   p.type = type;
 
+  if(type == 3)
+    p.scale = .05;
   if(type == 2)
     p.scale = .6;
   if(type == 1)
@@ -74,8 +82,13 @@ function createParticle(type, x, y){
 
 function gameOverMessage(){
   //console.log('Game Over');
-  fill(255);
+  clearInterval(theTimer);
+  fill(255, 153, 0);
   textAlign(CENTER);
   textSize(45);
-  text("You destroyed all the blocks #WIN", width/2, height/2);
+  text("You did good! #WIN", width/2, height/2);
+}
+
+function updateTimer(){
+  timer += 1;
 }
