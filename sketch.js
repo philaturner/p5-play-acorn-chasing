@@ -3,7 +3,7 @@ var player;
 var acorns;
 var timer = 0;
 var theTimer;
-var MAX_ACORNS = 10;
+var MAX_ACORNS = 15;
 var MARGIN = 40;
 var START_OFFSET = 750;
 
@@ -67,7 +67,7 @@ function createAcorn(type, x, y){
   a.type = type;
 
   if(type == 3)
-    a.scale = .05;
+    a.scale = .04;
   if(type == 2)
     a.scale = .6;
   if(type == 1)
