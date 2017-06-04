@@ -4,6 +4,8 @@ var spanners;
 var hurty;
 var timer = 0;
 var theTimer;
+var score;
+var acornCounter = 0;
 var health = 100;
 var dead = false;
 var won = false;
@@ -11,7 +13,7 @@ var won = false;
 //Global variables
 var MAX_ACORNS = 15;
 var MAX_SPANNERS = 5;
-var MARGIN = 40;
+var MARGIN = 30;
 var START_OFFSET = 750;
 var HEALTH_LOSS = 1;
 
@@ -48,7 +50,8 @@ function setup(){
   player.position.y = height/2;
   //player.addAnimation("normal", "assets/squizza_sprite.png", "assets/squizza_sprite.png");
   //player.addAnimation("hurting", "assets/squizza_hurting0001.png", "assets/squizza_hurting0002.png", "assets/squizza_hurting0003.png");
-
+  // acornCounter == MAX_ACORNS;
+  // console.log (acornCounter);
   theTimer = setInterval(updateTimer, 500);
 }
 
@@ -64,7 +67,9 @@ function draw(){
   fill(255);
   textAlign(CENTER);
   text("Mouse to move - Collect acorns & avoid spanners", width/2, 20);
-  text("Health", 45, 65);
+  text("Health", 47, 65);
+  textSize(18);
+  text("Acorns: " + acorns.length, width -100, 42);
   text(timer + ' seconds', width/2, height-20);
 
   //check to see if gameover
@@ -86,12 +91,14 @@ function draw(){
       if(s.position.x>width+MARGIN) s.position.x = -MARGIN;
       if(s.position.y<-MARGIN) s.position.y = height+MARGIN;
       if(s.position.y>height+MARGIN) s.position.y = -MARGIN;
+      acornCounter = 0;
   }
 
   //checks for overlap and removes sprite
   for (var i = 0; i < acorns.length; i++){
     if(player.overlap(acorns[i]))
       acorns[i].remove();
+      acornCounter --;
   }
 
   //for (var i = 0; i < spanners.length; i++){
@@ -168,6 +175,7 @@ function createSpanner(type, x, y){
 
 function gameOverMessage(){
   //console.log('Game Over');
+  score = calcScore();
   if (!dead){
     clearInterval(theTimer);
     fill(255, 153, 0);
@@ -182,6 +190,10 @@ function gameOverMessage(){
     textSize(45);
     text("Spanners Hurt #RIP", width/2, height/2);
   }
+  textAlign(CENTER);
+  textSize(22);
+  fill(255);
+  text("Score: " + score, width/2, height/2+40);
 }
 
 function updateTimer(){
@@ -193,4 +205,9 @@ function clearSprites(){
     var s = allSprites[i];
     s.remove();
   }
+}
+
+function calcScore(){
+  if (dead) return 0;
+  return (health * 10) - (timer * 4);
 }
