@@ -17,6 +17,12 @@ var MARGIN = 30;
 var START_OFFSET = 750;
 var HEALTH_LOSS = 1;
 
+//firebase stuff
+var database;
+var submitButton;
+var nameInput;
+var submitP;
+
 function preload(){
   //preload animations
   //hurty = loadAnimation("assets/squizza_hurting0003.png");
@@ -25,6 +31,28 @@ function preload(){
 
 function setup(){
   createCanvas(800,600);
+
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyDj7uIuvn-KWGM4q2GleJyxipkHpZfU9B0",
+    authDomain: "chasing-acorns.firebaseapp.com",
+    databaseURL: "https://chasing-acorns.firebaseio.com",
+    projectId: "chasing-acorns",
+    storageBucket: "chasing-acorns.appspot.com",
+    messagingSenderId: "88693760599"
+  };
+  firebase.initializeApp(config);
+  database = firebase.database();
+  console.log(database);
+
+  //create buttons etc and disable from default
+  submitP = createP('Submit your score if you win the game!')
+  nameInput = createInput('Enter name');
+  submitButton = createButton('Submit');
+  submitButton.attribute('disabled', true);
+  submitButton.mousePressed(submitScore);
+
+
   acorns = new Group();
   spanners = new Group(); //TODO Build into obsticles with trees, add player health and death
 
@@ -80,7 +108,6 @@ function draw(){
     for(var i=0; i<allSprites.length; i++) {
       var s = allSprites[i];
       s.remove();
-      gameOverMessage();
     }
   }
 
@@ -183,6 +210,7 @@ function gameOverMessage(){
     textSize(45);
     text("You did good! #WIN", width/2, height/2);
     clearSprites();
+    showScoreName();
   } else {
     clearInterval(theTimer);
     fill(255, 10, 0);
@@ -197,7 +225,7 @@ function gameOverMessage(){
 }
 
 function updateTimer(){
-  timer += 1;
+  timer += 0.5;
 }
 
 function clearSprites(){
@@ -210,4 +238,21 @@ function clearSprites(){
 function calcScore(){
   if (dead) return 0;
   return (health * 10) - (timer * 4);
+}
+
+function showScoreName(){
+  submitButton.removeAttribute('disabled');
+}
+
+function submitScore(){
+  submitButton.attribute('hidden',true)
+  nameInput.attribute('hidden', true)
+  createP('Thanks for submitting your score');
+  var data = {
+    name: nameInput.value(),
+    score: score
+  }
+  var scores = database.ref('scores').push(data);
+  //submitP.html('Score has been submited, thanks!')
+
 }
