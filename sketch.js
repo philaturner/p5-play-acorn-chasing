@@ -16,12 +16,14 @@ var MAX_SPANNERS = 5;
 var MARGIN = 30;
 var START_OFFSET = 750;
 var HEALTH_LOSS = 1;
+var HIGH_SCORE_LIMIT = 10;
 
 //firebase stuff
 var database;
 var submitButton;
 var nameInput;
 var submitP;
+var highScores =[];
 
 function preload(){
   //preload animations
@@ -30,7 +32,8 @@ function preload(){
 }
 
 function setup(){
-  createCanvas(800,600);
+  var canvas = createCanvas(800,600);
+  canvas.parent('canvas-container');
 
   // Initialize Firebase
   var config = {
@@ -45,10 +48,17 @@ function setup(){
   database = firebase.database();
   console.log(database);
 
+  //load data and highscores
+  var ref = database.ref("scores");
+  ref.on("value", gotData, errData);
+
   //create buttons etc and disable from default
   submitP = createP('Submit your score if you win the game!')
+  submitP.parent('content');
   nameInput = createInput('Enter name');
+  nameInput.parent('content');
   submitButton = createButton('Submit');
+  submitButton.parent('content');
   submitButton.attribute('disabled', true);
   submitButton.mousePressed(submitScore);
 
@@ -247,12 +257,58 @@ function showScoreName(){
 function submitScore(){
   submitButton.attribute('hidden',true)
   nameInput.attribute('hidden', true)
-  createP('Thanks for submitting your score');
+  createP('Thanks for submitting your score').parent('content');
   var data = {
     name: nameInput.value(),
     score: score
   }
   var scores = database.ref('scores').push(data);
   //submitP.html('Score has been submited, thanks!')
+  //populateHighscores();
+}
 
+function gotData(data) {
+  highScores = [];
+  var tempScores = data.val();
+
+  // Grab the keys to iterate over the object
+  var keys = Object.keys(tempScores);
+
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i];
+    var name = tempScores[key].name;
+    var score = tempScores[key].score;
+    //console.log(name,score);
+    highScores.push([name, score]);
+  }
+  highScores.sort(compareSecondColumn);
+
+  function compareSecondColumn(a, b) {
+    if (a[1] === b[1]) {
+        return 0;
+    }
+    else {
+        return (a[1] > b[1]) ? -1 : 1;
+    }
+  }
+  populateHighscores();
+}
+
+function populateHighscores(){
+  //clear old scores
+  var scoreClass = selectAll('.scores_list');
+  for (var i = 0; i < scoreClass.length; i++){
+    scoreClass[i].remove();
+  }
+
+  //gen new scores
+  for (i = 0; i < HIGH_SCORE_LIMIT; i++){
+    var li = createElement('li', highScores[i][0] + ': ' + highScores[i][1]);
+    li.class('scores_list');
+    li.parent('scorelist');
+  }
+}
+
+function errData(err){
+  console.log(err);
 }
